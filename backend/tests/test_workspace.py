@@ -485,7 +485,9 @@ def test_resume_parser_allows_other_sqlite_writes(migrated, monkeypatch):
 
     def parse_while_settings_change(_content, _kind):
         with closing(sqlite3.connect(migrated.data_dir / "applypilot.sqlite3", timeout=0.2)) as db:
-            db.execute("UPDATE workspace_settings SET workspace_name='Concurrent change' WHERE id=1")
+            db.execute(
+                "UPDATE workspace_settings SET workspace_name='Concurrent change' WHERE id=1"
+            )
             db.commit()
         return "Taylor Example\nSkills\nFinancial modeling"
 
