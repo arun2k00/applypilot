@@ -1,0 +1,71 @@
+name: Phase 1 checks
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  native:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    env:
+      NEXT_TELEMETRY_DISABLED: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - run: python -m pip install uv==0.12.16
+      - working-directory: backend
+        run: |
+          uv sync --locked
+          uv run --locked ruff format --check .
+          uv run --locked ruff check .
+          uv run --locked pytest
+      - working-directory: frontend
+        run: |
+          npm ci
+          npm run lint
+          npm run typecheck
+          npm test
+          npm run build
+      - if: runner.os == 'Linux'
+        working-directory: backend
+        run: |
+          uv export --quiet --locked --no-dev --no-emit-project --format requirements-txt --output-file runtime-requirements.txt
+          uvx --from pip-audit==2.10.0 pip-audit --disable-pip --no-deps --require-hashes --requirement runtime-requirements.txt
+      - if: runner.os == 'Linux'
+        working-directory: frontend
+        run: npm audit --audit-level=high
+
+  compose:
+    env:
+      APPLYPILOT_E2E_MUTATIONS: "1"
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+      - run: docker compose up -d --build --wait
+      - working-directory: frontend
+        run: |
+          npm ci
+          npx playwright install --with-deps --no-shell chromium
+          npm run test:e2e
+      - if: failure()
+        run: docker compose logs
+      - if: always()
+        run: docker compose down
