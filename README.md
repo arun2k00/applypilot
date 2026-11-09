@@ -3,7 +3,7 @@
 [![CI](https://github.com/arun2k00/applypilot/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/arun2k00/applypilot/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
-**A local workspace for finding jobs, preparing applications, and tracking what happens next.**
+**A self-hosted job search workspace, resume builder, and application tracker.**
 
 Bring in a resume, review the extracted facts, and compare job listings against the background and preferences you choose. Prepare a tailored application package, submit it on the employer’s site, and track follow-ups in one place. The core workflow runs locally with SQLite. Optional model providers require explicit consent before receiving candidate data.
 
@@ -62,5 +62,9 @@ ApplyPilot is in active development. The local workflow covers profile review, d
 - [Architecture and roadmap](docs/architecture.md)
 - [Changelog](CHANGELOG.md)
 - [Release checklist](docs/release.md)
+
+## About us
+
+We’re building ApplyPilot for people who want to run their job search on their own computer, understand why a listing matches, and review every application before sharing it. ApplyPilot is maintained by [Oacer Web Services](https://github.com/arun2k00).
 
 Contributions are welcome. See [Contributing](CONTRIBUTING.md), the [Code of Conduct](CODE_OF_CONDUCT.md), and the [Security Policy](SECURITY.md). ApplyPilot is available under the [MIT License](LICENSE).
